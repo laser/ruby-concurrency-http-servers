@@ -7,4 +7,7 @@ second:
 third:
 	CONCURRENCY=100 NUM_REQUESTS=3000 SOCKET_BACKLOG_LEN=1024 SERVER=03-preforking ./load-test.sh
 
-.PHONY: first second third
+fourth:
+	CONCURRENCY=100 NUM_REQUESTS=3000 SOCKET_BACKLOG_LEN=1024 SERVER=04-threads ./load-test.sh
+
+.PHONY: first second third fourth

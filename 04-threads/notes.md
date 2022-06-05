@@ -1,6 +1,6 @@
-# Preforking
+# Threads
 
-The threaded web server creates a fixed-sized pool of processes and
+The threaded web server creates a fixed-sized pool of threads and
 relies on the kernel to distribute inbound TCP connections amongst
 them.
 
