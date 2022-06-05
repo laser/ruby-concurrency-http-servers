@@ -1,0 +1,4 @@
+first:
+	CONCURRENCY=1000 NUM_REQUESTS=10000 SOCKET_BACKLOG_LEN=1024 SERVER=01-no-concurrency ./load-test.sh
+
+.PHONY: first
