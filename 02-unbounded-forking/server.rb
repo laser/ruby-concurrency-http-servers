@@ -27,6 +27,8 @@ loop do
     request_uri = client_socket.readline.split(' ')[1]
     response_body = "(#{SecureRandom.hex(10)}) You made an HTTP request to #{request_uri}\r\n"
 
+    sleep 0.01
+
     response_string = <<~RES.chomp
       HTTP/1.1 200 OK
       Content-Length: #{response_body.length}
