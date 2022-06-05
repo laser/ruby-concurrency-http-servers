@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'socket'
+require 'securerandom'
 
 port = (ENV['PORT'] || '4444').to_i
 backlog_len = (ENV['SOCKET_BACKLOG_LEN'] || '128').to_i
@@ -22,7 +23,7 @@ loop do
 
   begin
     request_uri = client_socket.readline.split(' ')[1]
-    response_body = "You made an HTTP request to #{request_uri}\r\n"
+    response_body = "(#{SecureRandom.hex(10)}) You made an HTTP request to #{request_uri}\r\n"
 
     response_string = <<~RES.chomp
       HTTP/1.1 200 OK

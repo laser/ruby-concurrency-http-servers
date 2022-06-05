@@ -26,7 +26,7 @@ function finish {
 
 trap finish EXIT
 
-PORT=${__port} HOST=${__host} SOCKET_BACKLOG_LEN=${SOCKET_BACKLOG_LEN} gtime -f '#inputs: %r, #outputs: %s, max mem: %MK' ruby ./${SERVER}/server.rb &
+PORT=${__port} HOST=${__host} SOCKET_BACKLOG_LEN=${SOCKET_BACKLOG_LEN} /usr/local/bin/time -f '#inputs: %r, #outputs: %s, max mem: %MK' ruby ./${SERVER}/server.rb &
 __gtime_pid=$!
 
 until netstat -an | grep ${__port} > /dev/null
