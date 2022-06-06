@@ -39,3 +39,5 @@ the kernel to distribute load across process blocked on the `accept(2)` syscall.
 Memory utilization is constrained by the fact that all worker threads share
 access to a single heap, and a single, synchronized PostgreSQL connection is
 sufficient for the lifetime of the program.
+
+[1]: https://httpd.apache.org/docs/2.4/programs/ab.html
