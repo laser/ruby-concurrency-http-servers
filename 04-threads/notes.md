@@ -7,4 +7,5 @@ them.
 ## Miscellaneous
 
 1. Need to pre-determine proper worker pool-size
-2. No shared heap means that you can't easily share state
+2. Easy to share scarce resource betwene threads b/c of shared heap,
+   with easy synchronization via mutex

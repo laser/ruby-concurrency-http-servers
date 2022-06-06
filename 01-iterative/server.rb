@@ -1,8 +1,8 @@
 #!/usr/bin/ruby
 # frozen_string_literal: true
 
+require 'pg'
 require 'socket'
-require 'securerandom'
 
 port = (ENV['PORT'] || '4444').to_i
 backlog_len = (ENV['SOCKET_BACKLOG_LEN'] || '128').to_i
@@ -18,26 +18,24 @@ server_socket.listen(backlog_len)
 
 warn "[server] listening: host=#{host}, port=#{port}"
 
+conn = PG.connect('postgresql://ruby:ruby@localhost:5432/ruby-concurrency')
+
 loop do
   client_socket, = server_socket.accept
 
   begin
-    request_uri = client_socket.readline.split(' ')[1]
-    response_body = "(#{SecureRandom.hex(10)}) You made an HTTP request to #{request_uri}\r\n"
+    request_line = client_socket.readline.chomp
 
-    sleep 0.01
-
-    response_string = <<~RES.chomp
+    client_socket.write <<~RES.chomp
       HTTP/1.1 200 OK
-      Content-Length: #{response_body.length}
+      Content-Length: #{request_line.length}
       Connection: close
       Content-Type: text/plain
 
-      #{response_body}
+      #{request_line}
     RES
 
-    client_socket.write response_string
-  rescue EOFError
+    conn.exec_params('INSERT INTO request_log (url) VALUES ($1)', [request_line])
   end
 
   client_socket.close
