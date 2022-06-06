@@ -5,7 +5,6 @@ require 'pg'
 require 'socket'
 
 port = (ENV['PORT'] || '4444').to_i
-backlog_len = (ENV['SOCKET_BACKLOG_LEN'] || '128').to_i
 host = ENV['HOST'] || '127.0.0.1'
 
 File.open('server.port', 'w') { |file| file.write(port) }
@@ -14,7 +13,7 @@ File.open('server.pid', 'w') { |file| file.write(Process.pid) }
 server_socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
 server_socket.setsockopt(:SOCKET, :REUSEADDR, true)
 server_socket.bind(Socket.sockaddr_in(port, host))
-server_socket.listen(backlog_len)
+server_socket.listen(Socket::SOMAXCONN)
 
 warn "[server] listening: host=#{host}, port=#{port}"
 
