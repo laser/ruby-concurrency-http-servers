@@ -13,11 +13,11 @@ File.open('server.pid', 'w') { |file| file.write(Process.pid) }
 server_socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
 server_socket.setsockopt(:SOCKET, :REUSEADDR, true)
 server_socket.bind(Socket.sockaddr_in(port, host))
-server_socket.listen(Socket::SOMAXCONN)
+server_socket.listen(2048)
 
 warn "[server] listening: host=#{host}, port=#{port}"
 
-pids = (1..20).map do
+pids = (1..20).each_with_object([]) do |_, acc|
   pid = Process.fork do
     conn = PG.connect('postgresql://ruby:ruby@localhost:5432/ruby-concurrency')
 
@@ -42,8 +42,13 @@ pids = (1..20).map do
       conn.exec_params('INSERT INTO request_log (url) VALUES ($1)', [request_line])
     end
   end
-  Process.detach(pid)
-  pid
+
+  unless pid.nil?
+    Process.detach(pid)
+    acc << pid
+  end
+
+  acc
 end
 
 Signal.trap('TERM') do
@@ -51,9 +56,7 @@ Signal.trap('TERM') do
     Process.kill('TERM', pid)
   end
 
-  Process.waitall
-
   Process.exit(0)
 end
 
-Process.waitall
+sleep

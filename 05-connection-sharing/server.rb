@@ -17,10 +17,11 @@ server_socket.listen(2048)
 
 warn "[server] listening: host=#{host}, port=#{port}"
 
+conn = PG.connect('postgresql://ruby:ruby@localhost:5432/ruby-concurrency')
+conn_mu = Mutex.new
+
 threads = (1..20).map do
   Thread.new do
-    conn = PG.connect('postgresql://ruby:ruby@localhost:5432/ruby-concurrency')
-
     loop do
       client_socket, = server_socket.accept
 
@@ -39,7 +40,9 @@ threads = (1..20).map do
 
       client_socket.close
 
-      conn.exec_params('INSERT INTO request_log (url) VALUES ($1)', [request_line])
+      conn_mu.synchronize do
+        conn.exec_params('INSERT INTO request_log (url) VALUES ($1)', [request_line])
+      end
     end
   end
 end
@@ -53,4 +56,6 @@ Signal.trap('TERM') do
   Process.exit(0)
 end
 
-threads.each(&:join)
+threads.each do |thread|
+  thread.join
+end

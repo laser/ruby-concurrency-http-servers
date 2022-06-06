@@ -13,7 +13,7 @@ File.open('server.pid', 'w') { |file| file.write(Process.pid) }
 server_socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
 server_socket.setsockopt(:SOCKET, :REUSEADDR, true)
 server_socket.bind(Socket.sockaddr_in(port, host))
-server_socket.listen(Socket::SOMAXCONN)
+server_socket.listen(2048)
 
 warn "[server] listening: host=#{host}, port=#{port}"
 

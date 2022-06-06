@@ -34,8 +34,15 @@ of the worker process-pool at the expense of overall throughput.
 
 ### 04-threads
 
-This HTTP server forks a fixed number of worker threads on boot, and relies on
-the kernel to distribute load across process blocked on the `accept(2)` syscall.
+This HTTP server spawns a fixed number of worker threads on boot, and relies on
+the kernel to distribute load across threads blocked on the `accept(2)` syscall.
+Memory utilization is constrained by the fact that all worker threads share
+access to a single heap. Each thread gets its own PostgreSQL connection.
+
+### 05-connection-sharing
+
+This HTTP server spawns a fixed number of worker threads on boot, and relies on
+the kernel to distribute load across threads blocked on the `accept(2)` syscall.
 Memory utilization is constrained by the fact that all worker threads share
 access to a single heap, and a single, synchronized PostgreSQL connection is
 sufficient for the lifetime of the program.
@@ -71,54 +78,54 @@ Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 127.0.0.1 (be patient)
-Completed 300 requests
+Completed 200 requests
+Completed 400 requests
 Completed 600 requests
-Completed 900 requests
+Completed 800 requests
+Completed 1000 requests
 Completed 1200 requests
-Completed 1500 requests
+Completed 1400 requests
+Completed 1600 requests
 Completed 1800 requests
-Completed 2100 requests
-Completed 2400 requests
-Completed 2700 requests
-Completed 3000 requests
-Finished 3000 requests
+Completed 2000 requests
+Finished 2000 requests
 
 
 Server Software:
 Server Hostname:        127.0.0.1
-Server Port:            60535
+Server Port:            58769
 
 Document Path:          /
 Document Length:        14 bytes
 
-Concurrency Level:      100
-Time taken for tests:   3.907 seconds
-Complete requests:      3000
+Concurrency Level:      200
+Time taken for tests:   0.739 seconds
+Complete requests:      2000
 Failed requests:        0
-Total transferred:      279000 bytes
-HTML transferred:       42000 bytes
-Requests per second:    767.88 [#/sec] (mean)
-Time per request:       130.228 [ms] (mean)
-Time per request:       1.302 [ms] (mean, across all concurrent requests)
-Transfer rate:          69.74 [Kbytes/sec] received
+Total transferred:      186000 bytes
+HTML transferred:       28000 bytes
+Requests per second:    2705.86 [#/sec] (mean)
+Time per request:       73.914 [ms] (mean)
+Time per request:       0.370 [ms] (mean, across all concurrent requests)
+Transfer rate:          245.75 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:        0    0   0.4      0       3
-Processing:     1  128  17.2    131     142
-Waiting:        0  128  17.2    131     141
-Total:          4  128  16.9    131     142
+Connect:        0    2   3.1      1      19
+Processing:     1   53  67.7     38     364
+Waiting:        0   52  67.5     38     363
+Total:         19   55  67.3     39     365
 
 Percentage of the requests served within a certain time (ms)
-  50%    131
-  66%    132
-  75%    134
-  80%    134
-  90%    137
-  95%    138
-  98%    140
-  99%    141
- 100%    142 (longest request)
+  50%     39
+  66%     40
+  75%     41
+  80%     42
+  90%     44
+  95%    325
+  98%    326
+  99%    327
+ 100%    365 (longest request)
 [load test] cleaning up...
-#inputs: 6005, #outputs: 6007, max mem: 21660K
+memusg: peak=23.0 megabytes
 ```

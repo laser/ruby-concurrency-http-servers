@@ -1,14 +1,17 @@
 first: database gems
-	CONCURRENCY=100 NUM_REQUESTS=3000 SERVER=01-iterative ./load-test.sh
+	CONCURRENCY=200 NUM_REQUESTS=3000 SERVER=01-iterative ./load-test.sh
 
 second: database gems
-	CONCURRENCY=100 NUM_REQUESTS=3000 SERVER=02-unbounded-forking ./load-test.sh
+	CONCURRENCY=50 NUM_REQUESTS=2000 SERVER=02-unbounded-forking ./load-test.sh
 
 third: database gems
-	CONCURRENCY=100 NUM_REQUESTS=3000 SERVER=03-preforking ./load-test.sh
+	CONCURRENCY=200 NUM_REQUESTS=2000 SERVER=03-preforking ./load-test.sh
 
 fourth: database gems
-	CONCURRENCY=100 NUM_REQUESTS=3000 SERVER=04-threads ./load-test.sh
+	CONCURRENCY=200 NUM_REQUESTS=2000 SERVER=04-threads ./load-test.sh
+
+fifth: database gems
+	CONCURRENCY=200 NUM_REQUESTS=2000 SERVER=05-connection-sharing ./load-test.sh
 
 database: tools gems
 	@-PGPASSWORD=ruby createdb -U ruby -h localhost -p 5432 ruby-concurrency "ruby concurrency tests"
@@ -21,4 +24,4 @@ tools:
 gems:
 	bundle
 
-.PHONY: first second third fourth database tools gems
+.PHONY: first second third fourth fifth database tools gems
