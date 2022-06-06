@@ -1,7 +1,5 @@
 database:
   image: "cimg/postgres:13.3"
-  volumes:
-    - /tmp/tempdatabase:/var/lib/postgresql/data
   environment:
     - POSTGRES_HOST_AUTH_METHOD=trust
     - POSTGRES_USER=ruby
