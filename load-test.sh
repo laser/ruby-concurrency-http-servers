@@ -26,7 +26,7 @@ function finish {
 
 trap finish EXIT
 
-PORT=${__port} HOST=${__host} SOCKET_BACKLOG_LEN=${SOCKET_BACKLOG_LEN} ./memusg.sh ruby ./${SERVER}/server.rb &
+PORT=${__port} HOST=${__host} ./memusg.sh ruby ./${SERVER} &
 __gtime_pid=$!
 
 until netstat -an | grep ${__port} > /dev/null
