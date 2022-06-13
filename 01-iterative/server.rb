@@ -22,20 +22,18 @@ conn = PG.connect('postgresql://ruby:ruby@localhost:5432/ruby-concurrency')
 loop do
   client_socket, = server_socket.accept
 
-  begin
-    request_line = client_socket.readline.chomp
+  request_line = client_socket.readline.chomp
 
-    client_socket.write <<~RES.chomp
-      HTTP/1.1 200 OK
-      Content-Length: #{request_line.length}
-      Connection: close
-      Content-Type: text/plain
+  client_socket.write <<~RES.chomp
+    HTTP/1.1 200 OK
+    Content-Length: #{request_line.length}
+    Connection: close
+    Content-Type: text/plain
 
-      #{request_line}
-    RES
+    #{request_line}
+  RES
 
-    conn.exec_params('INSERT INTO request_log (url) VALUES ($1)', [request_line])
-  end
+  conn.exec_params('INSERT INTO request_log (url) VALUES ($1)', [request_line])
 
   client_socket.close
 end

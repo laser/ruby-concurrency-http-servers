@@ -47,6 +47,12 @@ Memory utilization is constrained by the fact that all worker threads share
 access to a single heap, and a single, synchronized PostgreSQL connection is
 sufficient for the lifetime of the program.
 
+### 06-select
+
+This HTTP server uses the `select(2)` syscall to block until either a new client
+connection has been received by the server or one of those client connections is
+ready for reading.
+
 [1]: https://httpd.apache.org/docs/2.4/programs/ab.html
 
 ### Running Things
